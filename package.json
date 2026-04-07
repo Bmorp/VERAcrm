@@ -1,0 +1,16 @@
+{
+  "name": "vera-crm",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "VERA Executive CRM — Secure, cloud-deployed",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}

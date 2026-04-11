@@ -1,0 +1,10 @@
+{
+  "name": "vera-crm",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "VERA Executive CRM — High-Fidelity Static Deployment",
+  "private": true,
+  "scripts": {
+    "start": "serve ."
+  }
+}

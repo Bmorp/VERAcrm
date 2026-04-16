@@ -1,0 +1,23 @@
+{
+  "name": "VERA Executive CRM",
+  "short_name": "VERA CRM",
+  "description": "Premium lead management and performance analytics terminal.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#521216",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "vera.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "vera.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

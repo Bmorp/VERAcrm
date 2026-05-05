@@ -1,0 +1,2317 @@
+<!doctype html>
+<!-- VERA CRM -->
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <script src="jssip.min.js"></script>
+  <audio id="remote-audio" hidden></audio>
+  <script>
+    /* ── SECURITY GUARD ─────────────────────────────────────────────────── */
+    // Basic protection only, avoiding intrusive blur checks that fire on tablets
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+      const ctrl = e.ctrlKey || e.metaKey;
+      if (e.key === 'F12') { e.preventDefault(); }
+      if (ctrl && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) { e.preventDefault(); }
+      if (ctrl && ['U', 'S'].includes(e.key.toUpperCase())) { e.preventDefault(); }
+    });
+    /* ── END SECURITY GUARD ─────────────────────────────────────────────── */
+  </script>
+
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>VERA | Exclusive Terminal</title>
+  <!-- PDF.js for Standalone Training -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+  <!-- EXECUTIVE REPORTING ENGINES -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- HIGH-FIDELITY REPORTING ENGINES -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta name="description"
+    content="Premium lead management and performance analytics terminal for VERA showroom executives." />
+  <meta name="theme-color" content="#B68A35" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="VERA CRM" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" href="vera.png" />
+  <link rel="apple-touch-icon" href="vera.png" />
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="toast" style="
+        position: fixed;
+        top: 32px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 5000;
+        background: var(--surface-elevated);
+        backdrop-filter: blur(10px);
+        padding: 16px 32px;
+        border-radius: 20px;
+        box-shadow: var(--shadow-lg);
+        font-weight: 700;
+        display: none;
+        border-color: var(--accent);
+        color: var(--accent);
+        animation: 0.3s ease 0s 1 normal none running fadeIn;
+      ">
+    Sheet Sync Verified 📍
+  </div>
+
+
+  <div id="notif-drawer" class="">
+    <div style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 32px;
+        ">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span class="label" style="
+              margin: 0;
+              font-size: 14px;
+              color: var(--text-primary);
+              font-weight: 850;
+              letter-spacing: 0.5px;
+            ">TACTICAL UPDATES</span>
+        <span id="notif-count-pill" style="
+              font-size: 12px;
+              font-weight: 800;
+              background: var(--accent-gradient);
+              color: #ffffff;
+              padding: 4px 12px;
+              border-radius: 12px;
+              box-shadow: 0 4px 12px var(--accent-soft);
+            ">3</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 16px">
+        <span style="
+              font-size: 11px;
+              font-weight: 800;
+              color: var(--accent);
+              cursor: pointer;
+              letter-spacing: 1px;
+              transition: var(--transition);
+              opacity: 1;
+            " onclick="app.clearNotifications()" onmouseover="this.style.opacity = '0.7'"
+          onmouseout="this.style.opacity = '1'">DISMISS ALL</span>
+        <div onclick="app.toggleNotifications()" style="
+              cursor: pointer;
+              width: 32px;
+              height: 32px;
+              background: rgba(0, 0, 0, 0.04);
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: var(--transition);
+            " onmouseover="this.style.background = 'rgba(0,0,0,0.08)'"
+          onmouseout="this.style.background = 'rgba(0,0,0,0.04)'">
+          <svg width="16" height="16" fill="none" stroke="var(--text-primary)" stroke-width="3" stroke-linecap="round"
+            viewBox="0 0 24 24">
+            <path d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div id="notif-list">
+      <div class="notif-card" onclick="
+            app.viewLead('yG7PeshMchElLcsT7kch');
+            app.toggleNotifications();
+          ">
+        <div style="display: flex; gap: 16px; align-items: flex-start">
+          <div style="
+                width: 42px;
+                height: 42px;
+                border-radius: 12px;
+                background: rgba(255, 59, 48, 0.1);
+                color: var(--error);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                box-shadow: inset 0 0 0 1px rgba(255, 59, 48, 0.2);
+              ">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+              stroke-linejoin="round" viewBox="0 0 24 24">
+              <path
+                d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z">
+              </path>
+            </svg>
+          </div>
+          <div style="flex: 1">
+            <div style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 6px;
+                ">
+              <div style="
+                    font-weight: 850;
+                    font-size: 15px;
+                    color: var(--text-primary);
+                    letter-spacing: -0.3px;
+                  ">
+                Follow-up Reminder
+              </div>
+              <div style="
+                    font-size: 10px;
+                    font-weight: 750;
+                    color: var(--text-muted);
+                    opacity: 0.9;
+                  ">
+                08:10 PM
+              </div>
+            </div>
+            <div style="
+                  font-size: 13px;
+                  line-height: 1.5;
+                  color: var(--text-secondary);
+                ">
+              Scheduled outreach for anjali.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="notif-card" onclick="
+            app.viewLead('cwxlebuZLqaXPTdDptkJ');
+            app.toggleNotifications();
+          ">
+        <div style="display: flex; gap: 16px; align-items: flex-start">
+          <div style="
+                width: 42px;
+                height: 42px;
+                border-radius: 12px;
+                background: rgba(255, 59, 48, 0.1);
+                color: var(--error);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                box-shadow: inset 0 0 0 1px rgba(255, 59, 48, 0.2);
+              ">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+              stroke-linejoin="round" viewBox="0 0 24 24">
+              <path
+                d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z">
+              </path>
+            </svg>
+          </div>
+          <div style="flex: 1">
+            <div style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 6px;
+                ">
+              <div style="
+                    font-weight: 850;
+                    font-size: 15px;
+                    color: var(--text-primary);
+                    letter-spacing: -0.3px;
+                  ">
+                Follow-up Reminder
+              </div>
+              <div style="
+                    font-size: 10px;
+                    font-weight: 750;
+                    color: var(--text-muted);
+                    opacity: 0.9;
+                  ">
+                06:26 PM
+              </div>
+            </div>
+            <div style="
+                  font-size: 13px;
+                  line-height: 1.5;
+                  color: var(--text-secondary);
+                ">
+              Scheduled outreach for kfbebibivnreogn.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="notif-card" onclick="
+            app.viewLead('RA9FQqlX53iqXnQUEZla');
+            app.toggleNotifications();
+          ">
+        <div style="display: flex; gap: 16px; align-items: flex-start">
+          <div style="
+                width: 42px;
+                height: 42px;
+                border-radius: 12px;
+                background: rgba(255, 149, 0, 0.1);
+                color: var(--warning);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                box-shadow: inset 0 0 0 1px rgba(255, 149, 0, 0.2);
+              ">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+              stroke-linejoin="round" viewBox="0 0 24 24">
+              <path d="M12 2L1 21h22L12 2zm0 3.83L19.17 19H4.83L12 5.83zM11 16h2v2h-2v-2zm0-7h2v5h-2V9z"></path>
+            </svg>
+          </div>
+          <div style="flex: 1">
+            <div style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 6px;
+                ">
+              <div style="
+                    font-weight: 850;
+                    font-size: 15px;
+                    color: var(--text-primary);
+                    letter-spacing: -0.3px;
+                  ">
+                Action Required
+              </div>
+              <div style="
+                    font-size: 10px;
+                    font-weight: 750;
+                    color: var(--text-muted);
+                    opacity: 0.9;
+                  ">
+                06:29 PM
+              </div>
+            </div>
+            <div style="
+                  font-size: 13px;
+                  line-height: 1.5;
+                  color: var(--text-secondary);
+                ">
+              Varsha Jagadale - High-Intent lead captured. View registry
+              immediately.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTH SCREEN (REDESIGNED) -->
+  <div id="screen-auth" class="auth-screen" style="display: none; opacity: 0; visibility: hidden">
+    <div class="auth-backdrop"></div>
+
+    <div class="auth-card">
+      <div class="auth-logo-box">
+        <img src="vera.png" alt="VERA LOGO" />
+      </div>
+
+      <div style="text-align: center; margin-bottom: 40px">
+        <h1 style="
+              font-size: 34px;
+              font-weight: 700;
+              color: #fff;
+              margin-bottom: 8px;
+              letter-spacing: -1.5px;
+            ">
+          Elite Terminal
+        </h1>
+        <p style="
+              color: rgba(255, 255, 255, 0.5);
+              font-weight: 500;
+              font-size: 15px;
+              letter-spacing: -0.2px;
+            ">
+          Authorized Personnel Only
+        </p>
+      </div>
+
+      <div class="auth-input-group">
+        <label class="auth-label">Executive ID</label>
+        <div class="auth-input-wrapper">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+          </svg>
+          <input type="text" id="login-id" class="auth-field" placeholder="Enter Staff ID" autocomplete="username" />
+        </div>
+      </div>
+
+      <div class="auth-input-group">
+        <label class="auth-label">Security Access Key</label>
+        <div class="auth-input-wrapper">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+            </path>
+          </svg>
+          <input type="password" id="login-pass" class="auth-field" placeholder="••••••••"
+            autocomplete="current-password" />
+        </div>
+      </div>
+
+      <button class="auth-btn" onclick="app.handleLogin()">
+        <span>Verify Authority</span>
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path d="M13 5l7 7-7 7M5 12h14"></path>
+        </svg>
+      </button>
+
+      <div class="auth-footer">VERA SECURE SYSTEM • TLS 1.3</div>
+    </div>
+  </div>
+
+  <div id="app-body" class="app-body">
+    <!-- DASHBOARD (HOME) -->
+    <div id="screen-dashboard" class="screen active"
+      style="display: flex; flex-direction: column; opacity: 1; visibility: visible">
+      <div class="dash-hero-header"
+        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; width: 100%;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+            <span
+              style="font-size: 9px; font-weight: 950; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; background: var(--accent-light); padding: 4px 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px;">
+              <span class="pulse-hot" style="width: 6px; height: 6px;"></span>
+              Live Intelligence
+            </span>
+          </div>
+          <h1 class="responsive-h1" style="font-weight: 900; color: var(--text-primary); margin: 0;">CRM HUB</h1>
+          <p id="greeting-text"
+            style="font-size: 16px; font-weight: 750; color: var(--text-muted); margin-top: 12px; letter-spacing: -0.3px; opacity: 0.7;">
+            Good Afternoon, BHARATMORPANA
+          </p>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 24px">
+          <div class="action-icon-btn" onclick="app.toggleNotifications()">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+              viewBox="0 0 24 24">
+              <path
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+              </path>
+            </svg>
+            <div id="notif-badge" class="badge-pulse" style="display: none; top: -2px; right: -2px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WAR ROOM: VISUAL INTELLIGENCE -->
+      <div id="war-room-trajectory" class="card elevated" style="border-radius: 32px; padding: 24px; margin-bottom: 32px; background: #fff; height: 320px; position: relative; overflow: hidden;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 850; letter-spacing: -0.5px; color: var(--text-primary);">Visual Intelligence: War Room</h3>
+            <p style="font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px;">7-Day Lead Trajectory & Conversion Velocity</p>
+          </div>
+          <div class="badge badge-hot" style="font-size: 9px; font-weight: 900;">LIVE ANALYTICS</div>
+        </div>
+        <div style="height: calc(100% - 60px); width: 100%;">
+          <canvas id="trajectory-chart"></canvas>
+        </div>
+      </div>
+
+
+
+      <div id="kpi-grid" class="kpi-grid">
+        <!-- SOLID GREY PRE-BOOT SKELETONS -->
+        <div class="skeleton-card-premium"></div>
+        <div class="skeleton-card-premium"></div>
+        <div class="skeleton-card-premium"></div>
+        <div class="skeleton-card-premium"></div>
+        <div class="skeleton-card-premium"></div>
+        <div class="skeleton-card-premium"></div>
+      </div>
+
+      <!-- TEAM COMMAND BOARD ZONE -->
+      <div id="team-command-board" style="display: none; margin-bottom: 40px; margin-top: 20px;"></div>
+
+      <!-- DUAL-PANEL TACTICAL ZONE -->
+      <div id="dash-main-hub" class="panoramic-row">
+        <!-- QUICK LEAD CAPTURE SECTION -->
+        <div class="card elevated" style="border-radius: 32px; padding: 32px; background: #fff; height: 100%;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <div>
+              <h3 style="font-size: 18px; font-weight: 850; letter-spacing: -0.5px; color: var(--text-primary);">Quick
+                Lead Capture</h3>
+              <p
+                style="font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px;">
+                Rapid internal registry entry</p>
+            </div>
+            <div
+              style="width: 42px; height: 42px; background: rgba(82, 18, 22, 0.05); color: var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+              <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path d="M12 4v16m8-8H4" />
+              </svg>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <label class="label" style="margin: 0;">Name / Number</label>
+                <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                  <input type="checkbox" id="short-is-intl"
+                    onchange="app.updatePhoneValidation('short-lead-name', 'short-is-intl')"
+                    style="accent-color: var(--accent); width: 12px; height: 12px;">
+                  <span
+                    style="font-size: 9px; font-weight: 850; color: var(--accent); text-transform: uppercase;">International</span>
+                </label>
+              </div>
+              <div style="position: relative; display: flex; align-items: center;">
+                <input type="text" id="short-lead-name" class="input" placeholder="e.g. John / 9876543210"
+                  style="height: 52px; border-radius: 16px; width: 100%; padding-right: 50px;">
+                <button onclick="app.startVoiceCapture('short-lead-name')" style="position: absolute; right: 10px; background: none; border: none; cursor: pointer; color: var(--accent); opacity: 0.6; transition: 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">
+                  <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"></path><path d="M19 10v2a7 7 0 01-14 0v-2m7 9v4m-4 0h8"></path></svg>
+                </button>
+              </div>
+            </div>
+            <div>
+              <label class="label">Customer Location</label>
+              <input type="text" id="short-lead-location" class="input" placeholder="e.g. Mumbai, Dubai"
+                style="height: 52px; border-radius: 16px;">
+            </div>
+            <div>
+              <label class="label">Source</label>
+              <select id="short-lead-source" class="input" style="height: 52px; border-radius: 16px;">
+                <option value="Store Visit">Store Visit</option>
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Instagram">Instagram</option>
+                <option value="Facebook">Facebook</option>
+                <option value="Referral">Referral</option>
+                <option value="Walk-in">Walk-in</option>
+              </select>
+            </div>
+            <div>
+              <div style="position: relative; display: flex; align-items: center;">
+                <input type="text" id="short-lead-info" class="input" placeholder="What are they looking for?"
+                  style="height: 52px; border-radius: 16px; width: 100%; padding-right: 50px;">
+                <button onclick="app.startVoiceCapture('short-lead-info')" style="position: absolute; right: 10px; background: none; border: none; cursor: pointer; color: var(--accent); opacity: 0.6; transition: 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">
+                  <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"></path><path d="M19 10v2a7 7 0 01-14 0v-2m7 9v4m-4 0h8"></path></svg>
+                </button>
+              </div>
+            </div>
+
+            <button onclick="app.saveShortLead()"
+              style="margin-top: 12px; background: var(--accent); color: #fff; border: none; height: 52px; border-radius: 16px; font-size: 11px; font-weight: 950; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 10px 25px rgba(82, 18, 22, 0.25); display: flex; align-items: center; justify-content: center; gap: 12px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);"
+              onmouseover="this.style.transform='scale(1.02)'; this.style.background='#000';"
+              onmouseout="this.style.transform='scale(1)'; this.style.background='var(--accent)';">
+              CAPTURE & SYNCHRONIZE
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                <path d="M5 13l4 4L19 7"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- MIGRATED BROADCAST: STRATEGIC BRIEFING -->
+        <div id="dash-announcement-container" style="width: 100%;">
+          <div class="card announcement-card"
+            style="border-radius: 32px; padding: 28px 40px; position: relative; overflow: hidden; background: var(--accent-gradient); box-shadow: 0 15px 35px rgba(82,18,22,0.25);">
+            <div class="announcement-inner"
+              style="display: flex; gap: 40px; align-items: center; position: relative; z-index: 1;">
+              <div
+                style="width: 56px; height: 56px; background: rgba(255, 255, 255, 0.15); border: 1.5px solid rgba(255, 255, 255, 0.25); border-radius: 20px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(12px);">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m3 11 18-5v12L3 14v-3z"></path>
+                  <path d="M11.6 16.8 a3 3 0 1 1-5.8-0.8"></path>
+                </svg>
+              </div>
+              <div style="flex: 1">
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 4px;">
+                  <div class="executive-pill"
+                    style="font-size: 10px; padding: 4px 12px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);">
+                    Strategic Briefing</div>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span class="pulse-dot" style="background: #ffffff; width: 6px; height: 6px;"></span>
+                    <span
+                      style="font-size: 9px; font-weight: 900; color: #ffffff; opacity: 0.8; letter-spacing: 1px; text-transform: uppercase;">Real-time
+                      Protocol Active</span>
+                  </div>
+                </div>
+                <div id="dash-announcement-text" class="announcement-text"
+                  style="font-weight: 850; line-height: 1.4; font-size: 20px; color: #ffffff; letter-spacing: -0.5px;">
+                  Awaiting tactical briefing synchronization...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SMART CALCULATOR & PRICING -->
+        <div class="glass-card elevated" id="dash-trajectory-container"
+          style="padding: 28px; min-height: 280px; display: flex; flex-direction: column; gap: 20px; border-radius: 32px; background: #fff;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <div
+              style="font-size: 11px; font-weight: 850; letter-spacing: 1.5px; color: var(--accent); text-transform: uppercase;">
+              Smart Calculator & Pricing</div>
+            <div style="display: flex; gap: 12px; align-items: center">
+              <div style="font-size: 10px; color: var(--text-muted); opacity: 0.6; font-weight: 700;">LIVE UPDATES</div>
+              <button onclick="app.editGoldRates()"
+                style="background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 9px; font-weight: 900; cursor: pointer;">EDIT
+                RATES</button>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+            <div class="kpi-card"
+              style="padding: 16px; border-radius: 18px; border: 1px solid rgba(0,0,0,0.05); cursor: pointer;"
+              onclick="app.setCalcPurity('22K')">
+              <div style="display: flex; justify-content: space-between;"><span
+                  style="font-size: 11px; font-weight: 900;">22K</span><span id="trend-22k"
+                  style="font-size: 9px; color: #ff3b30;">▼ RATE</span></div>
+              <div id="gold-rate-22k" style="font-size: 18px; font-weight: 900; margin-top: 4px;">₹---</div>
+            </div>
+            <div class="kpi-card"
+              style="padding: 16px; border-radius: 18px; border: 1px solid rgba(0,0,0,0.05); cursor: pointer;"
+              onclick="app.setCalcPurity('24K (999)')">
+              <div style="display: flex; justify-content: space-between;"><span
+                  style="font-size: 11px; font-weight: 900;">24K (999)</span><span id="trend-24k"
+                  style="font-size: 9px; color: #ff3b30;">▼ RATE</span></div>
+              <div id="gold-rate-24k" style="font-size: 18px; font-weight: 900; margin-top: 4px;">₹---</div>
+            </div>
+            <div class="kpi-card"
+              style="padding: 16px; border-radius: 18px; border: 1px solid rgba(0,0,0,0.05); cursor: pointer;"
+              onclick="app.setCalcPurity('Silver')">
+              <div style="display: flex; justify-content: space-between;"><span
+                  style="font-size: 11px; font-weight: 900;">SILVER</span><span id="trend-silver"
+                  style="font-size: 9px; color: var(--success);">▲ RATE</span></div>
+              <div id="gold-rate-silver" style="font-size: 18px; font-weight: 900; margin-top: 4px;">₹---</div>
+            </div>
+            <div class="kpi-card"
+              style="padding: 16px; border-radius: 18px; border: 1px solid rgba(0,0,0,0.05); cursor: pointer;"
+              onclick="app.setCalcPurity('18K')">
+              <div style="display: flex; justify-content: space-between;"><span
+                  style="font-size: 11px; font-weight: 900;">18K</span><span id="trend-18k"
+                  style="font-size: 9px; color: #ff3b30;">▼ RATE</span></div>
+              <div id="gold-rate-18k" style="font-size: 18px; font-weight: 900; margin-top: 4px;">₹---</div>
+            </div>
+          </div> <!-- End of Gold Grid -->
+          <div style="
+                  background: rgba(82, 18, 22, 0.03);
+                  border-radius: 24px;
+                  padding: 24px;
+                  border: 1.5px solid rgba(82, 18, 22, 0.06);
+                ">
+            <div style="display: flex; flex-direction: column; gap: 20px">
+              <div style="display: flex; gap: 16px; align-items: center">
+                <div style="flex: 1">
+                  <div style="
+                          font-size: 9px;
+                          font-weight: 850;
+                          color: var(--text-muted);
+                          margin-bottom: 8px;
+                          text-transform: uppercase;
+                        ">
+                    Weight (g)
+                  </div>
+                  <input type="number" id="calc-weight" class="input" style="
+                          height: 52px;
+                          font-size: 18px;
+                          font-weight: 800;
+                          padding: 0 16px;
+                          background: #fff;
+                          border-radius: 16px;
+                        " placeholder="0.00" value="" oninput="app.updateCalc()" />
+                </div>
+                <div style="flex: 1">
+                  <div style="
+                          font-size: 9px;
+                          font-weight: 850;
+                          color: var(--text-muted);
+                          margin-bottom: 8px;
+                          text-transform: uppercase;
+                        ">
+                    Purity
+                  </div>
+                  <select id="calc-purity" class="input" style="
+                          height: 52px;
+                          font-size: 14px;
+                          font-weight: 800;
+                          padding: 0 12px;
+                          background: #fff;
+                          border-radius: 16px;
+                        " onchange="app.updateCalc()">
+                    <option value="18K">18K</option>
+                    <option value="Old Gold">Old Gold</option>
+                    <option value="24K (999)" selected="">24K (999)</option>
+
+                    <option value="Coin">Coin</option>
+                    <option value="22K">22K</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                      padding: 8px 0;
+                    ">
+                <label style="
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        cursor: pointer;
+                      ">
+                  <input type="checkbox" id="calc-gst" onchange="app.updateCalc()" style="
+                          width: 20px;
+                          height: 20px;
+                          accent-color: var(--accent);
+                          border-radius: 6px;
+                        " />
+                  <span style="
+                          font-size: 13px;
+                          font-weight: 850;
+                          color: var(--text-primary);
+                        ">Taxes (3% GST)</span>
+                </label>
+                <div style="display: flex; align-items: center; gap: 12px">
+                  <span style="
+                          font-size: 10px;
+                          font-weight: 850;
+                          color: var(--accent);
+                        ">MAKING (%):</span>
+                  <input type="number" id="calc-making" value="" class="input" style="
+                          width: 76px;
+                          height: 40px;
+                          font-size: 14px;
+                          font-weight: 800;
+                          padding: 0 8px;
+                          border-radius: 12px;
+                          background: #fff;
+                        " placeholder="%" oninput="app.updateCalc()" />
+                </div>
+              </div>
+
+              <div style="
+                      background: var(--accent-gradient);
+                      border-radius: 22px;
+                      padding: 24px;
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                      box-shadow: 0 15px 35px rgba(82, 18, 22, 0.35);
+                    ">
+                <div>
+                  <div style="
+                          font-size: 11px;
+                          font-weight: 850;
+                          color: rgba(255, 255, 255, 0.7);
+                          text-transform: uppercase;
+                        ">
+                    Live Estimate
+                  </div>
+                  <div id="calc-result" style="
+                          font-size: 30px;
+                          font-weight: 900;
+                          color: #ffffff;
+                          letter-spacing: -1.5px;
+                          line-height: 1;
+                          margin-top: 6px;
+                        ">
+                    ₹0
+                  </div>
+                </div>
+                <div style="
+                        text-align: right;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: flex-end;
+                        gap: 10px;
+                      ">
+                  <div id="calc-breakdown" style="
+                          font-size: 10px;
+                          color: rgba(255, 255, 255, 0.6);
+                          font-weight: 850;
+                        ">
+                    Basic: ₹14,774/g
+                  </div>
+                  <button onclick="app.copyQuote()" style="
+                          background: rgba(255, 255, 255, 0.25);
+                          border: 1px solid rgba(255, 255, 255, 0.15);
+                          padding: 6px 14px;
+                          border-radius: 10px;
+                          color: white;
+                          font-size: 10px;
+                          font-weight: 950;
+                          cursor: pointer;
+                          text-transform: uppercase;
+                          letter-spacing: 0.5px;
+                        ">
+                    Copy Quote
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> <!-- End of Calculator Card -->
+      </div> <!-- End of Tactical Zone Panoramic Row -->
+
+
+      <!-- ROW 4: TRIPLE-COLUMN TACTICAL WORKSPACE -->
+      <div id="dash-triple-workspace" class="triple-workspace">
+        <!-- COLUMN 1: ACTION QUEUE -->
+        <div class="tactical-col">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding: 0 8px;">
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #FF3B30;"></div>
+            <div
+              style="font-size: 11px; font-weight: 950; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-primary);">
+              Action Queue</div>
+          </div>
+          <div id="col-queue" style="display: flex; flex-direction: column; gap: 16px;">
+            <!-- Hot leads render here -->
+          </div>
+        </div>
+
+        <!-- COLUMN 2: ACTIVE TASKS -->
+        <div class="tactical-col">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding: 0 8px;">
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #FF9500;"></div>
+            <div
+              style="font-size: 11px; font-weight: 950; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-primary);">
+              Tactical Tasks</div>
+          </div>
+          <div id="col-tasks" style="display: flex; flex-direction: column; gap: 16px;">
+            <!-- Follow-ups render here -->
+          </div>
+        </div>
+
+        <!-- COLUMN 3: CONVERSION STREAM -->
+        <div class="tactical-col">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding: 0 8px;">
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #34C759;"></div>
+            <div
+              style="font-size: 11px; font-weight: 950; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-primary);">
+              Secured Stream</div>
+          </div>
+          <div id="col-secured" style="display: flex; flex-direction: column; gap: 16px;">
+            <!-- Purchased leads render here -->
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 40px; margin-top: 40px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
+          <span class="label" style="margin: 0">Lead Interaction Stream</span>
+          <div class="badge badge-cold" id="dash-apt-count" style="font-size: 10px; padding: 5px 14px">0 SECURED</div>
+        </div>
+        <div class="apt-strip" id="dash-apt-strip">
+          <div class="apt-card" onclick="app.viewLead('yG7PeshMchElLcsT7kch')" style="cursor: pointer">
+            <div style="
+                  font-weight: 950;
+                  color: var(--text-primary);
+                  font-size: 18px;
+                  letter-spacing: -1px;
+                ">
+              anjali
+            </div>
+            <div style="
+                  font-size: 11px;
+                  color: var(--accent);
+                  margin: 6px 0;
+                  font-weight: 700;
+                  letter-spacing: 0.5px;
+                  text-transform: uppercase;
+                ">
+              Rings
+            </div>
+            <div style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-top: 16px;
+                ">
+              <span class="badge badge-warm" style="font-size: 9px; padding: 4px 10px; font-weight: 900">Warm</span>
+              <span style="
+                    font-size: 10px;
+                    color: var(--text-muted);
+                    font-weight: 850;
+                    opacity: 0.6;
+                  ">08:10 PM</span>
+            </div>
+          </div>
+          <div class="apt-card" onclick="app.viewLead('DSI4HrbY9NA2n95EWx90')" style="cursor: pointer">
+            <div style="
+                  font-weight: 950;
+                  color: var(--text-primary);
+                  font-size: 18px;
+                  letter-spacing: -1px;
+                ">
+              ashok
+            </div>
+            <div style="
+                  font-size: 11px;
+                  color: var(--accent);
+                  margin: 6px 0;
+                  font-weight: 700;
+                  letter-spacing: 0.5px;
+                  text-transform: uppercase;
+                ">
+              Gold
+            </div>
+            <div style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-top: 16px;
+                ">
+              <span class="badge badge-warm" style="font-size: 9px; padding: 4px 10px; font-weight: 900">Warm</span>
+              <span style="
+                    font-size: 10px;
+                    color: var(--text-muted);
+                    font-weight: 850;
+                    opacity: 0.6;
+                  ">08:09 PM</span>
+            </div>
+          </div>
+          <div class="apt-card" onclick="app.viewLead('AM8txZv5T7QENkRMKDCR')" style="cursor: pointer">
+            <div style="
+                  font-weight: 950;
+                  color: var(--text-primary);
+                  font-size: 18px;
+                  letter-spacing: -1px;
+                ">
+              anjali
+            </div>
+            <div style="
+                  font-size: 11px;
+                  color: var(--accent);
+                  margin: 6px 0;
+                  font-weight: 700;
+                  letter-spacing: 0.5px;
+                  text-transform: uppercase;
+                ">
+              Rings
+            </div>
+            <div style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-top: 16px;
+                ">
+              <span class="badge badge-warm" style="font-size: 9px; padding: 4px 10px; font-weight: 900">Warm</span>
+              <span style="
+                    font-size: 10px;
+                    color: var(--text-muted);
+                    font-weight: 850;
+                    opacity: 0.6;
+                  ">08:08 PM</span>
+            </div>
+          </div>
+          <div class="apt-card" onclick="app.viewLead('oSSnGO89uBmKFmFDNtTn')" style="cursor: pointer">
+            <div style="
+                  font-weight: 950;
+                  color: var(--text-primary);
+                  font-size: 18px;
+                  letter-spacing: -1px;
+                ">
+              kjdvkjerb
+            </div>
+            <div style="
+                  font-size: 11px;
+                  color: var(--accent);
+                  margin: 6px 0;
+                  font-weight: 700;
+                  letter-spacing: 0.5px;
+                  text-transform: uppercase;
+                ">
+              Rings
+            </div>
+            <div style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-top: 16px;
+                ">
+              <span class="badge badge-warm" style="font-size: 9px; padding: 4px 10px; font-weight: 900">Warm</span>
+              <span style="
+                    font-size: 10px;
+                    color: var(--text-muted);
+                    font-weight: 850;
+                    opacity: 0.6;
+                  ">06:53 PM</span>
+            </div>
+          </div>
+        </div> <!-- End of dash-apt-strip -->
+      </div> <!-- End of Interaction wrapper -->
+    </div> <!-- AUTHORITATIVE CLOSING FOR screen-dashboard -->
+
+    <!-- TACTICAL MISSIONS COMMAND CENTER (NEW SECTION) -->
+    <div id="screen-missions" class="screen"
+      style="display: none; opacity: 0; visibility: hidden; flex-direction: column;">
+      <div id="tactical-missions-hub">
+        <!-- Populated by checkTacticalAlerts() -->
+      </div>
+    </div>
+
+    <!-- LEADS LIST (REGISTRY) -->
+    <div id="screen-leads" class="screen" style="display: none; opacity: 0; visibility: hidden; padding-top: 0;">
+      <div class="executive-vault-header"
+        style="margin-bottom: 40px; width: 100%; background: #fff; padding: 12px 24px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; border: 1.5px solid rgba(0,0,0,0.06); box-shadow: var(--shadow-sm); gap: 24px; flex-wrap: wrap;">
+        <div class="spotlight-wrapper"
+          style="flex: 1; min-width: 280px; display: flex; align-items: center; background: rgba(0,0,0,0.02); border-radius: 20px; padding: 0 16px;">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"
+            style="opacity: 0.4;">
+            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <input type="text" id="lead-search" class="input"
+            style="border: none; background: transparent; height: 54px; font-weight: 700; font-size: 15px; padding-left: 12px; width: 100%; outline: none;"
+            placeholder="Query Executive Vault..." oninput="app.debounce(app.refreshLeads, 300)" />
+        </div>
+
+        <!-- ADVANCED MEMBER FILTER (Admin/Supervisor Only) -->
+        <div id="vault-member-filter-container" style="display: none;">
+          <select id="vault-member-select" onchange="app.selectedMemberId = this.value; app.refreshLeads();"
+            style="height: 54px; border-radius: 20px; border: 1.5px solid rgba(0,0,0,0.06); background: #fff; padding: 0 16px; font-size: 12px; font-weight: 850; color: var(--text-primary); outline: none; box-shadow: var(--shadow-sm);">
+            <option value="all">ALL MEMBERS</option>
+          </select>
+        </div>
+
+        <div id="vault-date-filter-container" style="display: flex; align-items: center; gap: 8px;">
+          <input type="date" id="vault-date-select" onchange="app.selectedDate = this.value; app.refreshLeads();"
+            style="height: 54px; border-radius: 20px; border: 1.5px solid rgba(0,0,0,0.06); background: #fff; padding: 0 16px; font-size: 12px; font-weight: 850; color: var(--text-primary); outline: none; box-shadow: var(--shadow-sm);" />
+        </div>
+
+        <!-- ADVANCED MEMBER FILTER (Admin/Supervisor Only) -->
+        <div id="vault-member-filter-container" style="display: none;">
+          <select id="vault-member-select" onchange="app.selectedMemberId = this.value; app.refreshLeads();"
+            style="height: 54px; border-radius: 20px; border: 1.5px solid rgba(0,0,0,0.06); background: #fff; padding: 0 16px; font-size: 12px; font-weight: 850; color: var(--text-primary); outline: none; box-shadow: var(--shadow-sm);">
+            <option value="all">ALL MEMBERS</option>
+          </select>
+        </div>
+
+        <div class="segmented-control"
+          style="background: rgba(0,0,0,0.02); border-radius: 20px; padding: 4px; display: flex; gap: 4px; align-items: center; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;">
+
+          <!-- REGISTRY GROUP -->
+          <div
+            style="display: flex; background: rgba(0,0,0,0.03); border-radius: 18px; padding: 2px; gap: 2px; border: 1px solid rgba(0,0,0,0.04);">
+            <div class="segmented-option" id="chip-vault" onclick="app.viewFilteredRegistry(null)"
+              style="padding: 8px 18px; border-radius: 14px; font-size: 11px; font-weight: 950; cursor: pointer;">
+              Registry</div>
+            <div style="width: 1px; height: 16px; background: rgba(0,0,0,0.1); align-self: center;"></div>
+            <div class="segmented-option" id="chip-long" onclick="app.viewFilteredRegistry('long')"
+              style="padding: 8px 18px; border-radius: 14px; font-size: 11px; font-weight: 950; cursor: pointer;">Long
+            </div>
+            <div class="segmented-option" id="chip-short" onclick="app.viewFilteredRegistry('short')"
+              style="padding: 8px 18px; border-radius: 14px; font-size: 11px; font-weight: 950; cursor: pointer;">Short
+            </div>
+          </div>
+
+          <div class="segmented-option" id="chip-today" onclick="app.viewFilteredRegistry('today')"
+            style="padding: 10px 24px; border-radius: 16px; font-size: 12px; font-weight: 850; cursor: pointer;">Today
+          </div>
+          <div class="segmented-option" id="chip-arrived" onclick="app.viewFilteredRegistry('arrived')"
+            style="padding: 10px 24px; border-radius: 16px; font-size: 12px; font-weight: 850; cursor: pointer;">Arrived
+          </div>
+          <div class="segmented-option" id="chip-assigned" onclick="app.viewFilteredRegistry('assigned')"
+            style="padding: 10px 24px; border-radius: 16px; font-size: 12px; font-weight: 850; cursor: pointer;">Me
+          </div>
+          <div class="segmented-option" id="chip-followup" onclick="app.viewFilteredRegistry('followup')"
+            style="padding: 10px 24px; border-radius: 16px; font-size: 12px; font-weight: 850; cursor: pointer;">Tasked
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Filter Indicator Banner -->
+      <div id="leads-filter-banner" style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(82, 18, 22, 0.08);
+            color: var(--accent);
+            padding: 12px 20px;
+            border-radius: 18px;
+            margin-bottom: 32px;
+            border: 1px solid rgba(82, 18, 22, 0.15);
+            backdrop-filter: blur(8px);
+            flex-wrap: wrap;
+            gap: 12px;
+          ">
+        <div style="display: flex; align-items: center; gap: 12px">
+          <div style="
+                width: 24px;
+                height: 24px;
+                background: var(--accent);
+                color: #fff;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 10px rgba(82, 18, 22, 0.2);
+              ">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+              <path
+                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+              </path>
+            </svg>
+          </div>
+          <span id="leads-filter-tag" style="
+                font-size: 11px;
+                font-weight: 850;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+              ">Active Filter:
+            <span style="font-weight: 900">STRATEGIC FOLLOW-UPS</span></span>
+        </div>
+        <div onclick="app.viewFilteredRegistry(null)" class="btn-ghost" style="
+              font-size: 10px;
+              font-weight: 750;
+              cursor: pointer;
+              background: #ffffff;
+              color: var(--accent);
+              padding: 6px 14px;
+              border-radius: 10px;
+              border: 1.5px solid var(--accent);
+              box-shadow: var(--shadow-sm);
+              letter-spacing: 0.3px;
+            ">
+          CLEAR CRITERIA
+        </div>
+      </div>
+
+      <div id="leads-container"
+        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 24px;">
+        <!-- Leads populated via renderLeads -->
+      </div>
+      <div id="leads-sentinel" style="height: 100px; margin-top: 20px;"></div>
+    </div>
+
+    <!-- ADD LEAD -->
+    <div id="screen-add-lead" class="screen" style="display: none; opacity: 0; visibility: hidden">
+      <div style="
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 40px;
+          ">
+        <button onclick="app.navigate('dashboard')" class="btn-ghost" style="
+              width: 48px;
+              height: 48px;
+              border-radius: 16px;
+              padding: 0;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background: #ffffff;
+              border: none;
+              box-shadow: var(--shadow-sm);
+            ">
+          <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+            <path d="M15 18l-6-6 6-6"></path>
+          </svg>
+        </button>
+      </div>
+
+      <form id="enroll-form" onsubmit="event.preventDefault(); app.saveLead();">
+        <div class="panoramic-row"
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 32px; align-items: stretch;">
+          <!-- CARD 1: CUSTOMER FOUNDATION -->
+          <div class="card elevated"
+            style="margin: 0; padding: 40px; border-radius: 32px; background: rgba(255,255,255,0.7); backdrop-filter: blur(40px); border: 2px solid rgba(82,18,22,0.08); display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.04);">
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 32px;">
+              <div
+                style="width: 48px; height: 48px; background: var(--accent); color: #fff; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(82,18,22,0.2);">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+              </div>
+              <div>
+                <span class="label"
+                  style="color: var(--accent); margin-bottom: 2px; font-size: 14px; font-weight: 950; letter-spacing: 2px; display: block;">CUSTOMER
+                  FOUNDATION</span>
+                <span
+                  style="font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7;">Identity
+                  & Contact Matrix</span>
+              </div>
+            </div>
+
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 28px;">
+              <div class="input-group">
+                <span class="label">Customer Full Name</span>
+                <div class="input-icon-wrapper">
+                  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
+                    <circle cx="8.5" cy="7" r="4"></circle>
+                  </svg>
+                  <input type="text" id="f-name" class="input"
+                    style="height: 64px; border-radius: 18px; background: rgba(0,0,0,0.02); border: 1.5px solid rgba(0,0,0,0.04);"
+                    placeholder="Enter name here..." />
+                </div>
+              </div>
+
+              <div class="input-group">
+                <span class="label">Customer Location</span>
+                <div class="input-icon-wrapper">
+                  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                  <input type="text" id="f-location" class="input"
+                    style="height: 64px; border-radius: 18px; background: rgba(0,0,0,0.02); border: 1.5px solid rgba(0,0,0,0.04);"
+                    placeholder="e.g. Mumbai, Dubai, Walk-in" />
+                </div>
+              </div>
+
+              <div class="input-group" style="margin-bottom: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                  <span class="label" style="margin: 0;">Mobile Number</span>
+                  <label
+                    style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: var(--accent-soft); padding: 6px 12px; border-radius: 10px;">
+                    <input type="checkbox" id="f-is-intl" onchange="app.updatePhoneValidation('f-phone', 'f-is-intl')"
+                      style="accent-color: var(--accent); width: 12px; height: 12px;">
+                    <span
+                      style="font-size: 9px; font-weight: 950; color: var(--accent); text-transform: uppercase;">International</span>
+                  </label>
+                </div>
+                <div class="input-icon-wrapper">
+                  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
+                    </path>
+                  </svg>
+                  <input type="tel" id="f-phone" class="input"
+                    style="height: 64px; border-radius: 18px; background: rgba(0,0,0,0.02); border: 1.5px solid rgba(0,0,0,0.04);"
+                    placeholder="e.g. 9876543210" oninput="app.restrictPhone(this, 'f-is-intl')" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 2: OMNI-PRODUCT MATRIX -->
+          <div class="card elevated"
+            style="margin: 0; padding: 40px; border-radius: 32px; background: rgba(255,255,255,0.7); backdrop-filter: blur(40px); border: 2px solid rgba(82,18,22,0.08); display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.04);">
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 32px;">
+              <div
+                style="width: 48px; height: 48px; background: #1d1d1f; color: #fff; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path
+                    d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4">
+                  </path>
+                </svg>
+              </div>
+              <div>
+                <span class="label"
+                  style="color: var(--accent); margin-bottom: 2px; font-size: 14px; font-weight: 950; letter-spacing: 2px; display: block;">OMNI-PRODUCT
+                  MATRIX</span>
+                <span
+                  style="font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7;">Intelligent
+                  Inventory Clusters</span>
+              </div>
+            </div>
+
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
+              <div class="omni-matrix-grid" style="display: flex; flex-direction: column; gap: 12px;">
+                <!-- CLUSTER HUDs -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                  <div
+                    style="background: #1d1d1f; border-radius: 20px; padding: 16px; border: 1px solid rgba(255,255,255,0.1);">
+                    <div
+                      style="font-size: 8px; font-weight: 950; color: rgba(255,255,255,0.4); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1.5px;">
+                      MENS HUB</div>
+                    <div id="grid-mens"
+                      style="display: flex; flex-direction: column; gap: 8px; max-height: 120px; overflow-y: auto; padding-right: 4px;">
+                    </div>
+                  </div>
+                  <div
+                    style="background: #1d1d1f; border-radius: 20px; padding: 16px; border: 1px solid rgba(255,255,255,0.1);">
+                    <div
+                      style="font-size: 8px; font-weight: 950; color: rgba(255,255,255,0.4); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1.5px;">
+                      WOMENS HUB</div>
+                    <div id="grid-womens"
+                      style="display: flex; flex-direction: column; gap: 8px; max-height: 120px; overflow-y: auto; padding-right: 4px;">
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                  <div
+                    style="background: #ffffff; border-radius: 20px; padding: 14px; border: 1.5px solid rgba(0,0,0,0.05); box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+                    <div
+                      style="font-size: 8px; font-weight: 950; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">
+                      COUPLES</div>
+                    <div id="grid-couple"
+                      style="display: flex; flex-direction: column; gap: 6px; max-height: 100px; overflow-y: auto;">
+                    </div>
+                  </div>
+                  <div
+                    style="background: #ffffff; border-radius: 20px; padding: 14px; border: 1.5px solid rgba(0,0,0,0.05); box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+                    <div
+                      style="font-size: 8px; font-weight: 950; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">
+                      KIDS</div>
+                    <div id="grid-kids"
+                      style="display: flex; flex-direction: column; gap: 6px; max-height: 100px; overflow-y: auto;">
+                    </div>
+                  </div>
+                  <div
+                    style="background: #ffffff; border-radius: 20px; padding: 14px; border: 1.5px solid rgba(0,0,0,0.05); box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+                    <div
+                      style="font-size: 8px; font-weight: 950; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">
+                      BULLION</div>
+                    <div id="grid-bullion"
+                      style="display: flex; flex-direction: column; gap: 6px; max-height: 100px; overflow-y: auto;">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SMART ANALYSIS INDICATOR -->
+              <div
+                style="margin-top: auto; padding: 16px 24px; background: rgba(82, 18, 22, 0.05); border-radius: 20px; border: 1.5px dashed rgba(82, 18, 22, 0.2); display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div class="scanning-orb"
+                    style="width: 12px; height: 12px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 15px var(--accent);">
+                  </div>
+                  <span
+                    style="font-size: 11px; font-weight: 850; color: var(--accent); letter-spacing: 1px; text-transform: uppercase;">VERA
+                    AI Analysis Active</span>
+                </div>
+                <div style="font-size: 9px; font-weight: 950; color: var(--text-muted); opacity: 0.5;">UPLINK : READY
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 3: ACQUISITION LOGISTICS -->
+          <div class="card elevated"
+            style="margin: 0; padding: 40px; border-radius: 32px; background: rgba(255,255,255,0.7); backdrop-filter: blur(40px); border: 2px solid rgba(82,18,22,0.08); display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.04);">
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 32px;">
+              <div
+                style="width: 48px; height: 48px; background: var(--accent); color: #fff; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(82,18,22,0.2);">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                  </path>
+                </svg>
+              </div>
+              <div>
+                <span class="label"
+                  style="color: var(--accent); margin-bottom: 2px; font-size: 14px; font-weight: 950; letter-spacing: 2px; display: block;">ACQUISITION
+                  LOGISTICS</span>
+                <span
+                  style="font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7;">Strategic
+                  Sourcing & Priority</span>
+              </div>
+            </div>
+
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 28px;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="input-group" style="margin-bottom: 0;">
+                  <span class="label">Classification</span>
+                  <select id="f-query-type" class="input"
+                    style="height: 60px; border-radius: 16px; font-size: 13px; font-weight: 700; background: rgba(0,0,0,0.02); border: 1.5px solid rgba(0,0,0,0.04);"
+                    onchange="app.handleQueryChange()" required="">
+                    <option value="">-- SELECT --</option>
+                    <option value="Information Call">Information Call</option>
+                    <option value="Product Information & Pricing">Product Information & Pricing</option>
+                    <option value="Offers & Plans">Offers & Plans</option>
+                    <option value="Shop Timing">Shop Timing</option>
+                  </select>
+                </div>
+                <div class="input-group" style="margin-bottom: 0;">
+                  <span class="label">Priority Axis</span>
+                  <select id="f-priority" class="input"
+                    style="height: 60px; border-radius: 16px; font-size: 13px; font-weight: 700; background: rgba(0,0,0,0.02); border: 1.5px solid rgba(0,0,0,0.04);">
+                    <option value="Hot">Hot</option>
+                    <option value="Warm" selected>Warm</option>
+                    <option value="Cold">Cold</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="input-group">
+                <span class="label">Discovery Channel</span>
+                <select id="f-source" class="input"
+                  style="height: 60px; border-radius: 16px; font-size: 13px; font-weight: 700; background: rgba(0,0,0,0.02); border: 1.5px solid rgba(0,0,0,0.04);"
+                  onchange="app.handleSourceChange()">
+                  <option value="">-- SELECT SOURCE --</option>
+                  <option>Referral</option>
+                  <option>Instagram</option>
+                  <option>Facebook</option>
+                  <option>WhatsApp</option>
+                  <option>Store Visit</option>
+                  <option>Walk-in</option>
+                </select>
+              </div>
+
+              <div class="input-group">
+                <span class="label">Weight Intent</span>
+                <div class="input-icon-wrapper">
+                  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M3 6l3 12h12l3-12H3z"></path>
+                  </svg>
+                  <input type="text" id="f-weight" class="input"
+                    style="height: 60px; border-radius: 16px; background: rgba(0,0,0,0.02); border: 1.5px solid rgba(0,0,0,0.04);"
+                    placeholder="e.g. 10g - 20g" />
+                </div>
+              </div>
+
+              <!-- DYNAMIC COIN LOGISTICS -->
+              <div id="sec-coin" class="conditional-section"
+                style="padding: 16px; background: rgba(82,18,22,0.03); border-radius: 20px; border: 1.5px solid rgba(82,18,22,0.05);">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                  <div class="input-group" style="margin-bottom: 0;">
+                    <span class="label">Material</span>
+                    <select id="f-coin-material" class="input" style="height: 52px; font-size: 13px;">
+                      <option>Gold</option>
+                      <option>Silver</option>
+                    </select>
+                  </div>
+                  <div class="input-group" style="margin-bottom: 0;">
+                    <span class="label">Weight</span>
+                    <input type="text" id="f-coin-weight" class="input" style="height: 52px; font-size: 13px;"
+                      placeholder="e.g. 5g" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 4: TACTICAL STRATEGY -->
+          <div class="card elevated"
+            style="margin: 0; padding: 40px; border-radius: 32px; background: rgba(255,255,255,0.7); backdrop-filter: blur(40px); border: 2px solid rgba(82,18,22,0.08); display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.04);">
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 32px;">
+              <div
+                style="width: 48px; height: 48px; background: #1d1d1f; color: #fff; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                  </path>
+                </svg>
+              </div>
+              <div>
+                <span class="label"
+                  style="color: var(--accent); margin-bottom: 2px; font-size: 14px; font-weight: 950; letter-spacing: 2px; display: block;">TACTICAL
+                  STRATEGY</span>
+                <span
+                  style="font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7;">Observation
+                  & Field Objectives</span>
+              </div>
+            </div>
+
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 28px;">
+              <div class="input-group">
+                <span class="label">Primary Requirement Log</span>
+                <textarea id="f-note" class="input"
+                  style="height: 120px; padding: 18px; resize: none; border-radius: 20px; background: rgba(0,0,0,0.02); border: 1.5px solid rgba(0,0,0,0.04); font-size: 14px; line-height: 1.6;"
+                  placeholder="Describe customer requirements in detail..."></textarea>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px;">
+                <div class="input-group" style="margin-bottom: 0;">
+                  <span class="label">Follow-up Window</span>
+                  <input type="date" id="f-follow-date" class="input"
+                    style="height: 60px; border-radius: 16px; background: rgba(0,0,0,0.02); border: 1.5px solid rgba(0,0,0,0.04); font-weight: 700;" />
+                </div>
+                <div class="input-group" style="margin-bottom: 0;">
+                  <span class="label">Phase Status</span>
+                  <select id="f-is-followup" class="input"
+                    style="height: 60px; border-radius: 16px; background: rgba(0,0,0,0.02); border: 1.5px solid rgba(0,0,0,0.04); font-weight: 700;">
+                    <option value="no">Active Lead</option>
+                    <option value="yes">Strategic Follow-up</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="margin-top: auto;">
+                <span class="label" style="display: block; margin-bottom: 16px;">Strategic Objectives</span>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                  <label class="check-item-luxe"
+                    style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: #fff; border-radius: 16px; border: 1.5px solid rgba(0,0,0,0.04); cursor: pointer; transition: all 0.3s ease;">
+                    <span
+                      style="font-size: 11px; font-weight: 800; color: var(--text-primary); letter-spacing: 0.5px;">Schedule
+                      Physical Consultation</span>
+                    <input type="checkbox" name="f-check" value="Schedule Physical Consultation" id="obj-1"
+                      style="accent-color: var(--accent); width: 18px; height: 18px;">
+                  </label>
+                  <label class="check-item-luxe"
+                    style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: #fff; border-radius: 16px; border: 1.5px solid rgba(0,0,0,0.04); cursor: pointer; transition: all 0.3s ease;">
+                    <span
+                      style="font-size: 11px; font-weight: 800; color: var(--text-primary); letter-spacing: 0.5px;">Transmit
+                      Digital Catalog</span>
+                    <input type="checkbox" name="f-check" value="Transmit Digital Catalog" id="obj-2"
+                      style="accent-color: var(--accent); width: 18px; height: 18px;">
+                  </label>
+                </div>
+                <div class="input-group" style="margin-top: 20px; margin-bottom: 0;">
+                  <span class="label">Custom Objective Axis</span>
+                  <input type="text" id="f-custom-task" class="input"
+                    style="height: 54px; border-radius: 14px; font-size: 12px; font-weight: 600; background: rgba(82,18,22,0.03);"
+                    placeholder="e.g. Manual intervention trigger..." />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- UNIFIED COMMAND AXIS -->
+        <div style="width: 100%; margin-top: 64px; display: flex; justify-content: center; padding-bottom: 40px;">
+          <button type="submit" id="btn-enroll" class="auth-btn"
+            style="width: 100%; max-width: 900px; border-radius: 32px; padding: 32px; background: linear-gradient(135deg, #521216 0%, #1d1d1f 100%); box-shadow: 0 30px 70px rgba(82,18,22,0.35); border: 2px solid rgba(255,255,255,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 24px; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <span
+                style="font-size: 22px; font-weight: 950; letter-spacing: 1px; color: #fff; text-transform: uppercase;">Verify
+                & Secure Registry Entry</span>
+              <span
+                style="font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 2px;">Vera
+                Intelligence Protocol: Inactive</span>
+            </div>
+            <div
+              style="width: 56px; height: 56px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.2);">
+              <svg width="28" height="28" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24">
+                <path d="M13 5l7 7-7 7M5 12h14"></path>
+              </svg>
+            </div>
+          </button>
+        </div>
+      </form>
+
+      </form>
+    </div>
+
+    <!-- PROFILE TERMINAL (EXEC COMMAND) -->
+    <div id="screen-profile" class="screen" style="display: none; opacity: 0; visibility: hidden">
+      <div id="profile-container" style="padding-bottom: 120px">
+        <!-- Dynamically Injected by renderProfile() -->
+      </div>
+    </div>
+
+    <!-- ANALYTICS HUB -->
+    <div id="screen-stats" class="screen" style="display: none; opacity: 0; visibility: hidden">
+      <div id="stats-container" style="padding-bottom: 120px"></div>
+    </div>
+
+    <!-- ADMIN PANEL (SYSTEM CONTROL) -->
+    <div id="screen-admin-panel" class="screen" style="display: none; opacity: 0; visibility: hidden">
+      <div id="admin-panel-container" style="padding-bottom: 120px">
+        <!-- Injected by renderAdminPanel() -->
+      </div>
+    </div>
+
+
+    <!-- ACTIVITY TERMINAL (OPERATIONAL PULSE) -->
+    <div id="screen-activity" class="screen" style="display: none; opacity: 0; visibility: hidden">
+      <div id="activity-container" class="grid-container" style="padding-bottom: 120px">
+        <!-- Content injected by renderActivity -->
+      </div>
+    </div>
+
+    <!-- AUDIT HUB (QA SECTOR) -->
+    <div id="screen-audit" class="screen" style="display: none; opacity: 0; visibility: hidden">
+      <div id="audit-container" style="padding-bottom: 120px; max-width: 1200px; margin: 0 auto;">
+        <!-- Injected by renderAuditHub() -->
+      </div>
+    </div>
+
+    <div id="screen-messages" class="screen" style="
+          display: none;
+          opacity: 0;
+          visibility: hidden;
+          padding: 100px 16px 120px;
+        ">
+      <div class="chat-container">
+        <div class="chat-sidebar">
+          <div style="padding: 24px 20px; border-bottom: 1px solid rgba(0, 0, 0, 0.04);">
+            <h2 style="font-size: 18px; font-weight: 850; letter-spacing: -0.8px;">Team Hub</h2>
+            <p
+              style="font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px;">
+              Executive Node</p>
+          </div>
+
+          <div class="search-box">
+            <svg width="18" height="18" fill="none" stroke="var(--text-muted)" viewBox="0 0 24 24">
+              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" class="search-input" placeholder="Search team members..."
+              oninput="app.filterChatMembers(this.value)">
+          </div>
+
+          <div id="chat-contact-list" style="flex: 1; overflow-y: auto; padding-top: 8px;">
+            <!-- Contacts dynamically injected -->
+          </div>
+        </div>
+
+        <div class="chat-main" id="chat-main-window">
+          <div id="chat-empty-state"
+            style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at top left, rgba(82, 18, 22, 0.05), transparent 60%), radial-gradient(circle at bottom right, rgba(0, 122, 255, 0.03), transparent 60%); position: relative; overflow: hidden;">
+            <!-- ANIMATED AURA MESH -->
+            <div
+              style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.1; pointer-events: none;">
+              <div class="pulse"
+                style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, var(--accent) 0%, transparent 70%); filter: blur(100px); animation: drift 15s infinite alternate;">
+              </div>
+            </div>
+
+            <div class="glass-card"
+              style="padding: 60px; border-radius: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); background: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 30px 60px rgba(0,0,0,0.05); transform: translateY(0); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);">
+              <div
+                style="width: 100px; height: 100px; background: var(--accent-gradient); border-radius: 32px; display: flex; align-items: center; justify-content: center; color: #fff; margin-bottom: 32px; transform: rotate(-8deg); box-shadow: 0 20px 40px rgba(82,18,22,0.3);">
+                <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                  </path>
+                </svg>
+              </div>
+              <h2
+                style="font-weight: 950; font-size: 24px; letter-spacing: -1px; color: var(--text-primary); margin-bottom: 8px;">
+                Select a team member</h2>
+              <p
+                style="font-size: 13px; color: var(--text-muted); font-weight: 750; letter-spacing: 0.5px; text-transform: uppercase;">
+                Secure Executive Channel • RSA-4096 Active</p>
+            </div>
+          </div>
+
+          <div id="chat-active-window" style="display: none; flex: 1; flex-direction: column">
+            <div class="chat-header">
+              <button onclick="app.closeChatWindow()"
+                style="padding: 8px; background: rgba(0,0,0,0.05); border: none; border-radius: 12px; margin-right: 12px; display: none;"
+                id="chat-back-btn">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                  <path d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <div id="active-contact-avatar" class="staff-avatar">
+                ?
+                <div class="status-dot"></div>
+              </div>
+              <div style="flex: 1;">
+                <div id="active-contact-name" style="font-weight: 850; font-size: 17px; letter-spacing: -0.5px;">-</div>
+                <div id="active-contact-status"
+                  style="font-size: 10px; font-weight: 850; color: #34C759; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 4px;">
+                  <span class="pulse" style="width: 5px; height: 5px; background: #34C759; border-radius: 50%;"></span>
+                  Active Now
+                </div>
+              </div>
+              <div style="display: flex; gap: 12px;">
+                <button class="btn-icon"
+                  style="width: 42px; height: 42px; background: rgba(0,0,0,0.03); border: none; border-radius: 12px; color: var(--text-muted);"><svg
+                    width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
+                    </path>
+                  </svg></button>
+                <button class="btn-icon"
+                  style="width: 42px; height: 42px; background: rgba(0,0,0,0.03); border: none; border-radius: 12px; color: var(--text-muted);"><svg
+                    width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                    </path>
+                  </svg></button>
+              </div>
+            </div>
+            <div id="chat-stream" class="chat-messages-stream">
+              <!-- Messages injected here -->
+            </div>
+            <div class="chat-input-area">
+              <button
+                style="width: 48px; height: 48px; min-width: 48px; background: rgba(0,0,0,0.05); border: none; border-radius: 16px; color: var(--text-muted); display: flex; align-items: center; justify-content: center;">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path d="M12 4v16m8-8H4" />
+                </svg>
+              </button>
+              <input type="text" id="chat-input" class="input"
+                style="height: 52px; border-radius: 18px; font-weight: 600; padding: 0 24px;"
+                placeholder="Type secure message..." onkeypress="if (event.key === 'Enter') app.sendChatMessage();" />
+              <button class="btn btn-primary" onclick="app.sendChatMessage()" style="
+                    width: 52px;
+                    height: 52px;
+                    padding: 0;
+                    min-width: 52px;
+                    border-radius: 18px;
+                    box-shadow: 0 8px 20px var(--accent-soft);
+                  ">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                  <path d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLOATING CALL CONTROLLER -->
+    <div id="call-controller" class="call-controller">
+      <div id="call-avatar" class="call-avatar">?</div>
+      <div style="text-align: center;">
+        <div id="call-name" style="font-weight: 950; font-size: 18px; letter-spacing: -0.5px;">-</div>
+        <div id="call-number" style="font-size: 12px; color: var(--text-muted); font-weight: 750; margin-top: 2px;">-
+        </div>
+      </div>
+
+      <div class="call-status-pulse">
+        <span class="dot"></span>
+        <span id="call-status">Connecting...</span>
+      </div>
+
+      <div id="call-timer" class="call-timer">00:00</div>
+
+      <div id="call-rec-indicator" class="call-rec-badge" style="display: none;">
+        <span style="width: 5px; height: 5px; background: #ff3b30; border-radius: 50%;"></span>
+        REC ACTIVE
+      </div>
+
+      <button class="btn-hangup" onclick="app.endCall()">
+        <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"
+            transform="rotate(135 12 12)" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- DETAIL MODAL -->
+    <div id="lead-modal" class="modal-sheet" style="
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 5000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.4);
+      " onclick="app.closeModal(event)" data-active-lead-id="DSI4HrbY9NA2n95EWx90">
+      <div class="modal-content" style="
+          position: relative;
+          width: 90%;
+          max-width: 650px;
+          max-height: 85vh;
+          overflow-y: auto;
+          background: #fff;
+          padding: 32px;
+          border-radius: 32px;
+          transform: translateY(0);
+        ">
+        <div class="modal-close-btn" onclick="app.closeModal()" style="
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            color: var(--text-muted);
+          ">
+          <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+            <path d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </div>
+        <div id="modal-body" style="animation: fadeIn 0.4s ease">
+          <div style="text-align: center; margin-bottom: 40px">
+            <div class="avatar-box" style="
+                width: 88px;
+                height: 88px;
+                margin: 0 auto;
+                font-size: 32px;
+                border-width: 4px;
+                background: var(--accent-gradient);
+                color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                font-weight: 600;
+              ">
+              a
+            </div>
+            <h2 style="
+                font-size: 32px;
+                font-weight: 700;
+                color: var(--text-primary);
+                margin-top: 24px;
+                letter-spacing: -1.5px;
+                line-height: 1;
+              ">
+              ashok
+            </h2>
+            <div style="
+                display: flex;
+                justify-content: center;
+                gap: 12px;
+                margin: 18px 0;
+                align-items: center;
+              ">
+              <span class="status-pill" style="
+                  font-size: 11px;
+                  background: #ff950015;
+                  color: #ff9500;
+                  border: 1px solid #ff950030;
+                  height: 32px;
+                  display: flex;
+                  align-items: center;
+                ">Warm RATING</span>
+              <div style="display: flex; align-items: center; gap: 8px">
+                <span class="status-pill" style="
+                    font-size: 11px;
+                    font-weight: 850;
+                    height: 32px;
+                    display: flex;
+                    align-items: center;
+                    background: rgba(0, 0, 0, 0.03);
+                    color: var(--text-muted);
+                    border: none;
+                  ">Follow-up</span>
+
+                <button onclick="app.markFollowUpDone('DSI4HrbY9NA2n95EWx90')" style="
+                    background: var(--accent);
+                    color: rgb(255, 255, 255);
+                    border: none;
+                    padding: 0px 12px;
+                    height: 32px;
+                    border-radius: 12px;
+                    font-size: 10px;
+                    font-weight: 800;
+                    letter-spacing: 0.5px;
+                    cursor: pointer;
+                    transition: var(--transition);
+                    box-shadow: 0 4px 10px var(--accent-soft);
+                    opacity: 1;
+                  " onmouseover="this.style.opacity = '0.9'" onmouseout="this.style.opacity = '1'">
+                  DONE
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div style="
+              background: rgba(0, 0, 0, 0.02);
+              border-radius: 32px;
+              padding: 32px;
+              border: 0.8px solid rgba(0, 0, 0, 0.04);
+              margin-bottom: 40px;
+            ">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px">
+              <div>
+                <div class="label" style="
+                    font-size: 10px;
+                    margin-bottom: 6px;
+                    letter-spacing: 0.5px;
+                  ">
+                  SECURE CHANNEL
+                </div>
+                <div style="
+                    font-weight: 600;
+                    font-size: 16px;
+                    color: var(--text-primary);
+                    letter-spacing: -0.5px;
+                  ">
+                  1234567890
+                </div>
+              </div>
+              <div>
+                <div class="label" style="
+                    font-size: 10px;
+                    margin-bottom: 6px;
+                    letter-spacing: 0.5px;
+                  ">
+                  INTEREST PROFILE
+                </div>
+                <div style="
+                    font-weight: 600;
+                    font-size: 16px;
+                    color: var(--text-primary);
+                    letter-spacing: -0.5px;
+                  ">
+                  Gold
+                </div>
+              </div>
+              <div>
+                <div class="label" style="
+                    font-size: 10px;
+                    margin-bottom: 6px;
+                    letter-spacing: 0.5px;
+                  ">
+                  REGISTRY AUTH DATE
+                </div>
+                <div style="
+                    font-weight: 600;
+                    font-size: 16px;
+                    color: var(--text-primary);
+                    letter-spacing: -0.5px;
+                  ">
+                  Apr 6, 2026
+                </div>
+              </div>
+              <div>
+                <div class="label" style="
+                    font-size: 10px;
+                    margin-bottom: 6px;
+                    letter-spacing: 0.5px;
+                  ">
+                  WEIGHT RANGE
+                </div>
+                <div style="
+                    font-weight: 600;
+                    font-size: 16px;
+                    color: var(--text-primary);
+                    letter-spacing: -0.5px;
+                  ">
+                  20gm
+                </div>
+              </div>
+              <div>
+                <div class="label" style="
+                    font-size: 10px;
+                    margin-bottom: 6px;
+                    letter-spacing: 0.5px;
+                  ">
+                  FOLLOW-UP DATE
+                </div>
+                <div style="
+                    font-weight: 600;
+                    font-size: 16px;
+                    color: var(--accent);
+                    letter-spacing: -0.5px;
+                  ">
+                  NOT SCHEDULED
+                </div>
+              </div>
+            </div>
+
+            <div style="
+                margin-top: 32px;
+                padding-top: 24px;
+                border-top: 1.5px dashed rgba(0, 0, 0, 0.06);
+              ">
+              <div class="label" style="font-size: 10px; margin-bottom: 16px">
+                STRATEGIC OBJECTIVES
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 10px">
+                <span style="
+                    background: #fff;
+                    padding: 8px 16px;
+                    border-radius: 14px;
+                    font-size: 11px;
+                    font-weight: 850;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+                    color: var(--text-primary);
+                    border: 0.8px solid rgba(0, 0, 0, 0.04);
+                  ">Gold booking update</span><span style="
+                    background: #fff;
+                    padding: 8px 16px;
+                    border-radius: 14px;
+                    font-size: 11px;
+                    font-weight: 850;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+                    color: var(--text-primary);
+                    border: 0.8px solid rgba(0, 0, 0, 0.04);
+                  ">Sending pdf update</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 40px">
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 24px;
+              ">
+              <h3 class="label" style="margin: 0; font-size: 12px; letter-spacing: 1px">
+                TACTICAL TIMELINE
+              </h3>
+              <div class="status-pill" style="
+                  font-size: 10px;
+                  font-weight: 600;
+                  color: var(--accent);
+                  cursor: pointer;
+                " onclick="app.updateStatus('DSI4HrbY9NA2n95EWx90')">
+                ELEVATE STATUS
+              </div>
+            </div>
+            <div id="timeline-list">
+              <div class="timeline-item" style="
+                  margin-bottom: 20px;
+                  padding-left: 20px;
+                  border-left: 2px solid rgba(0, 0, 0, 0.05);
+                  position: relative;
+                ">
+                <div style="
+                    position: absolute;
+                    left: -5px;
+                    top: 0;
+                    width: 8px;
+                    height: 8px;
+                    background: var(--accent);
+                    border-radius: 50%;
+                  "></div>
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 6px;
+                  ">
+                  <span style="
+                      font-size: 10px;
+                      color: var(--text-muted);
+                      font-weight: 600;
+                    ">Apr 6, 08:09 PM</span>
+                </div>
+                <p style="
+                    font-size: 14px;
+                    font-weight: 750;
+                    color: var(--text-secondary);
+                    line-height: 1.5;
+                    margin: 0;
+                    letter-spacing: -0.2px;
+                  ">
+                  Lead Captured (Strategic Hub)
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- SMART QUOTING NODE -->
+          <div style="
+              margin: 24px 0 40px 0;
+              padding: 24px;
+              border-radius: 24px;
+              background: rgba(82, 18, 22, 0.03);
+              border: 1px solid rgba(82, 18, 22, 0.08);
+            ">
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+              ">
+              <h4 style="
+                  font-size: 10px;
+                  font-weight: 850;
+                  color: var(--accent);
+                  letter-spacing: 1.2px;
+                  margin: 0;
+                  text-transform: uppercase;
+                ">
+                Instant Quote Terminal
+              </h4>
+              <span style="
+                  font-size: 9px;
+                  font-weight: 700;
+                  color: var(--text-muted);
+                  opacity: 0.6;
+                ">REF: DSI4HrbY9NA2n95EWx90</span>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center">
+              <div style="flex: 1.2">
+                <div style="
+                    font-size: 8px;
+                    font-weight: 750;
+                    color: var(--text-muted);
+                    margin-bottom: 5px;
+                    text-transform: uppercase;
+                  ">
+                  Weight Range (g)
+                </div>
+                <input type="number" id="modal-calc-weight" placeholder="0.00" class="input"
+                  style="height: 48px; font-size: 14px; padding: 0 16px" oninput="app.updateModalQuote()" />
+                <div style="
+                    font-size: 8px;
+                    color: var(--text-muted);
+                    margin-top: 4px;
+                  ">
+                  + 3% GST included
+                </div>
+              </div>
+              <div style="flex: 1.8">
+                <div style="
+                    font-size: 8px;
+                    font-weight: 750;
+                    color: var(--text-muted);
+                    margin-bottom: 5px;
+                    text-transform: uppercase;
+                  ">
+                  Selection Purity
+                </div>
+                <select id="modal-calc-purity" class="input" style="height: 48px; font-size: 12px; padding: 0 12px"
+                  onchange="app.updateModalQuote()">
+                  <option value="18K">18K</option>
+                  <option value="Old Gold">Old Gold</option>
+                  <option value="24K (999)">24K (999)</option>
+
+                  <option value="Coin">Coin</option>
+                  <option value="22K">22K</option>
+                </select>
+              </div>
+            </div>
+            <div id="modal-quote-res" style="
+                margin-top: 20px;
+                padding: 16px;
+                background: #fff;
+                border-radius: 18px;
+                border: 1px solid rgba(0, 0, 0, 0.04);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+              ">
+              <div>
+                <div style="
+                    font-size: 8px;
+                    font-weight: 850;
+                    color: var(--text-muted);
+                    text-transform: uppercase;
+                  ">
+                  Live Valuation
+                </div>
+                <div class="modal-quote-val" style="
+                    font-size: 22px;
+                    font-weight: 800;
+                    color: var(--text-primary);
+                    letter-spacing: -0.5px;
+                  ">
+                  ₹0.00
+                </div>
+              </div>
+              <button onclick="app.captureQuote('DSI4HrbY9NA2n95EWx90')" style="
+                  background: var(--accent-gradient);
+                  color: #fff;
+                  border: none;
+                  padding: 12px 24px;
+                  border-radius: 14px;
+                  font-size: 11px;
+                  font-weight: 950;
+                  cursor: pointer;
+                  box-shadow: 0 8px 20px rgba(82, 18, 22, 0.25);
+                  letter-spacing: 0.3px;
+                ">
+                LOG QUOTE
+              </button>
+            </div>
+          </div>
+
+          <div class="action-hub" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px">
+            <button class="btn-hub btn-call" onclick="window.location.href = 'tel:1234567890'"
+              style="padding: 12px 6px; font-size: 11px">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.01.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.58l2.2-2.21a1.42 1.42 0 00.24-1.01C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z">
+                </path>
+              </svg>
+              Voice Call
+            </button>
+            <button class="btn-hub btn-wa" onclick="window.open('https://wa.me/1234567890', '_blank')"
+              style="padding: 12px 6px; font-size: 11px">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .004 5.411.001 12.045a11.848 11.848 0 001.608 5.967L0 24l6.117-1.605a11.838 11.838 0 005.925 1.587h.005c6.632 0 12.042-5.411 12.045-12.047a11.83 11.83 0 01-3.535-8.525z">
+                </path>
+              </svg>
+              WhatsApp
+            </button>
+            <button class="btn-hub" onclick="app.showAssignModal('DSI4HrbY9NA2n95EWx90')" style="
+                background: var(--bg-primary);
+                color: var(--accent);
+                border: 1.5px solid var(--accent-soft);
+                padding: 12px 6px;
+                font-size: 11px;
+              ">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                <path
+                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                </path>
+              </svg>
+              Delegate
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav id="bottom-nav" class="bottom-nav" style="display: flex">
+      <!-- SIDEBAR BRAND HEADER -->
+      <div class="sidebar-only" style="margin-bottom: 24px; padding: 0 12px;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <div
+            style="width: 48px; height: 48px; background: var(--accent); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(82, 18, 22, 0.2);">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+            </svg>
+          </div>
+          <div>
+            <div
+              style="font-size: 20px; font-weight: 850; color: var(--text-primary); letter-spacing: -1px; line-height: 1;">
+              VERA</div>
+            <div
+              style="font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px;">
+              Exclusive CRM</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ZONE 1: OPERATIONAL CORE -->
+      <div class="sidebar-only"
+        style="padding: 12px; margin-top: 8px; font-size: 11px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2.5px; opacity: 0.6;">
+        Operational Core</div>
+
+      <div class="nav-item active" id="nav-home" onclick="app.navigate('dashboard')"
+        style="color: var(--accent); opacity: 1">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+          </path>
+        </svg>
+        <span>Home</span>
+      </div>
+
+      <div id="nav-radar" class="nav-item" onclick="app.navigate('missions')"
+        style="color: var(--text-muted); margin-top: 4px;">
+        <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>Radar</span>
+      </div>
+
+      <div id="nav-new-entry" class="nav-item" onclick="app.navigate('add-lead')"
+        style="color: var(--text-muted); margin-top: 4px;">
+        <div
+          style="width: 24px; height: 24px; background: var(--accent); color: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900;">
+          +</div>
+        <span>New Entry</span>
+      </div>
+
+      <!-- ZONE 2: DATA REPOSITORY -->
+      <div class="sidebar-only"
+        style="padding: 12px; margin-top: 24px; font-size: 11px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2.5px; opacity: 0.6;">
+        Data Repository</div>
+
+      <div id="nav-leads" class="nav-item" onclick="app.navigate('leads')" style="color: var(--text-muted);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+          </path>
+        </svg>
+        <span>Vault</span>
+      </div>
+
+      <div id="nav-audit" class="nav-item" onclick="app.navigate('audit')"
+        style="color: var(--text-muted); display: none;">
+        <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          <path
+            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+          </path>
+        </svg>
+        <span>Audit</span>
+      </div>
+
+      <!-- ZONE 3: COMMAND & COLLABORATION -->
+      <div class="sidebar-only"
+        style="padding: 12px; margin-top: 24px; font-size: 11px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2.5px; opacity: 0.6;">
+        Command Hub</div>
+
+      <div id="nav-messages-mobile-hide" class="nav-item" onclick="app.navigate('messages')"
+        style="color: var(--text-muted); opacity: 0.4">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+          </path>
+        </svg>
+        <span>Team Chat</span>
+      </div>
+
+      <div id="nav-stats" class="nav-item" onclick="app.navigate('stats')"
+        style="color: var(--text-muted); display: none;">
+        <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2">
+          </path>
+        </svg>
+        <span>Analytics</span>
+      </div>
+
+      <!-- ZONE 4: EXECUTIVE CONSOLE -->
+      <div class="sidebar-only"
+        style="padding: 12px; margin-top: 24px; font-size: 11px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2.5px; opacity: 0.6;">
+        Executive Console</div>
+
+      <div id="nav-profile" class="nav-item" onclick="app.navigate('profile')" style="color: var(--text-muted);">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+        </svg>
+        <span>Identity</span>
+      </div>
+
+      <div id="nav-admin" class="nav-item" onclick="app.navigate('admin-panel')" style="color: var(--text-muted);">
+        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path
+            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+          </path>
+        </svg>
+        <span>Control</span>
+      </div>
+    </nav>
+
+  <!-- OMNISEARCH OVERLAY (Spotlight Style) -->
+  <div id="omni-search-overlay" class="omni-search-overlay">
+    <div class="omni-search-panel">
+      <div class="omni-search-header">
+        <svg width="24" height="24" fill="none" stroke="var(--accent)" stroke-width="3" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        <input type="text" id="omni-search-input" class="omni-search-input" placeholder="Search Leads or QMS Visitors..." oninput="app.performUniversalSearch(this.value)">
+        <div style="font-size: 10px; font-weight: 950; color: var(--text-muted); background: rgba(0,0,0,0.05); padding: 6px 12px; border-radius: 10px;">ESC TO CLOSE</div>
+      </div>
+      <div id="omni-search-results" class="omni-search-results">
+        <div style="padding: 60px; text-align: center; opacity: 0.6;">
+          <div style="font-size: 18px; font-weight: 900; color: var(--text-primary);">Universal Intelligence Search</div>
+          <div style="font-size: 12px; margin-top: 10px; font-weight: 700;">Type name or phone to scan CRM & QMS registry</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- DYNAMIC ISLAND (Command Center) -->
+    <div id="header-island" class="island-container">
+      <div class="island-inner">
+        <!-- SEARCH STATE LABEL (Hidden by default) -->
+        <div id="island-search-active" style="display: none; font-size: 11px; font-weight: 950; color: var(--accent); letter-spacing: 2px; animation: fadeIn 0.3s ease;">
+           SEARCH ACTIVE
+        </div>
+
+        <div id="island-default-content" style="width: 100%;">
+          <div class="island-main-row">
+            <!-- SEGMENT 1: HUB PULSE -->
+            <div class="island-segment">
+              <div id="island-dot" class="island-pill"></div>
+              <div id="island-text" style="font-size: 10px; font-weight: 950; text-transform: uppercase; color: rgba(255,255,255,0.6); letter-spacing: 1px;">HUB</div>
+            </div>
+    
+            <!-- SEGMENT 2: LIVE TIMER -->
+            <div class="island-segment">
+              <div id="island-timer" class="timer-label">00:00:00</div>
+            </div>
+    
+            <!-- SEGMENT 3: SESSION YIELD -->
+            <div class="island-segment">
+              <div style="font-size: 10px; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 6px;">
+                <span id="island-yield" style="color: var(--success); font-weight: 950;">0</span>
+                <span style="opacity: 0.5;">YIELD</span>
+              </div>
+            </div>
+
+            <!-- SEGMENT 4: STASH DENSITY -->
+            <div class="island-segment">
+              <div style="font-size: 10px; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 6px;">
+                <span id="island-stash" style="color: var(--accent); font-weight: 950;">0.0k</span>
+                <span style="opacity: 0.5;">STASH</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="island-expanded" class="island-expanded-content">
+          <!-- Strategic Preview Hub -->
+        </div>
+      </div>
+    </div>
+  </div> <!-- FINAL AUTHORITATIVE CLOSURE FOR THE ORIGINAL app-body -->
+
+  <script type="module" src="main.js?v=9.5.2"></script>
+</body>
+
+</html>
